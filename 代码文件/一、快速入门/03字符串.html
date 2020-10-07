@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字符串</title>
+</head>
+<body>
+    <!-- 01转义字符 -->
+    <script>
+        //使用“\”
+        console.log("通过\"\\\"来进行转义");
+        console.log("我要换行\n");
+        console.log("十六进制表达\x41");//A
+        console.log("Unicode字符表达\u4e2d\u6587");//中文
+    </script>
+
+    <!-- 02多行字符串 -->
+    <script>
+        //1.转义字符\n
+        console.log("我是\n"+"新的\n"+"多行文本");
+        //2.ES6标准新增了一种多行字符串的表示方法，用反引号表示
+        console.log(`我是
+                    新的
+                    多行文本`);
+    </script>
+
+    <!-- 03模板字符串 -->
+    <script>
+        //1.字符串连接符“+”
+        var name = "牛绍乾";
+        var age = 24;
+        var birthday="1998/10/04";
+        console.log("字符串连接符--> "+"姓名："+name+",年龄："+age+",生日："+birthday);
+        //2.模板字符串--ES6新增,使用反引号表示
+        console.log(`模板字符串--> 姓名：${name},年龄：${age},生日：${birthday}`);
+    </script>
+
+    <!-- 04操作字符串 -->
+    <script>
+        var str = "hello";
+        //1.length属性
+        console.log(str.length);
+        //2.以类似数组的形式访问
+        console.log(str[4]);
+        console.log(str[str.length]);//undefined 越界访问
+        //3.字符串的不可变性
+        str[4] = 'D';
+        console.log(str);//"hello"
+            //对比数组
+            var arr = [1,2,3,4];
+            arr[2] = 10;
+            console.log(arr);//"1,10,3,4"
+            
+        //4.转换大小写
+        var nstr = str.toUpperCase();
+        console.log("我是大写的"+nstr);
+        var nstr1 = nstr.toLowerCase();
+        console.log("我是小写的"+nstr1);
+
+        //5.indexOf()--搜索指定字符串出现的位置
+        //找到则返回值；找不到则返回-1
+        console.log(str.indexOf("lo"));//3
+        console.log(str.indexOf("lll"));//-1
+
+        //6.substring()
+        console.log(str.substring(1,4));//"ell"只取start到end-1部分
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对象</title>
+</head>
+<body>
+    <!-- 01对象 -->
+    <script>
+        //1.对象是一种无序的集合数据类型，它由若干键值对组成
+        //所有属性都是字符串，不过属性对应的值可以是任意数据类型
+        var person = {
+            name:"牛绍乾",
+            age:23,
+            birthday:"1998-10-04",
+            toString(){
+                console.log(`姓名：${this.name}，年龄：${this.age}，生日：${this.birthday}`);
+            },
+        }
+        person.toString();
+    </script>
+
+    <!-- 02属性 -->
+    <script>
+        var person = {
+            name:"牛绍乾",
+            age:23,
+            birthday:"1998-10-04",
+            'name-age':"牛绍乾，23",
+            }
+        //1.访问形式：属性名必须是一个有效的变量名。如果属性名包含特殊字符，就必须用''括起来
+            //所有属性都是字符串，不过属性对应的值可以是任意数据类型
+                //形式一：person.name
+                console.log(person.name);
+                //形式二：person["name-age"] 适用于特殊字符
+                console.log(person['name-age'])
+            //访问不存在的属性
+            console.log(person['name-birth']);//undefined
+        //2.操作属性
+            //添加属性
+            person['name-birth'] = "牛绍乾，19981004";
+            console.log(person['name-birth']);
+            //删除属性
+            delete person['name-birth'];//此时该属性存在
+            console.log(person['name-birth']);
+            delete person['name-birth'];//此时该属性不存在,不会报错
+            console.log(person['name-birth']);
+            //判断属性的存在
+                //自身属性 hasOwnProperty()
+                console.log(person.hasOwnProperty('name-birth'));//不存在的属性 false
+                console.log(person.hasOwnProperty('name'));//自身属性 true
+                console.log(person.hasOwnProperty('toString'));//原型链上的 false
+                //原型链上的 in
+                console.log('name-birth' in person);//不存在的属性 false
+                console.log('name' in person);//自身属性 true
+                console.log('toString' in person);//原型链上的 true
+    </script>
+</body>
+</html>
