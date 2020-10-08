@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>条件判断</title>
+</head>
+<body>
+    <!-- 01单行条件判断 -->
+    <script>
+        //如果语句块只包含一条语句，那么可以省略{}
+        var a = 1;
+        if( a == 1) 
+            console.log("我是1");
+        else 
+            console.log("我不是1");
+    </script>
+    
+    <!-- 02多行条件判断 -->
+    <script>
+        //嵌套if-else
+        var a = 1;
+        if( a > 0){
+            if( a > 1) 
+                console.log("我大于0且大于1");
+            else
+                console.log("我就是1");
+        }else{
+            if( a < 0) 
+                console.log("我小于0");
+            else
+                console.log("我就是0");
+        }
+        //级联if-else
+        var a = 0;
+        if( a > 0){
+            console.log("...");
+        }else if( a < 0){
+            console.log("我小于0");
+        }else{
+            console.log("我就是0");
+        }
+    </script>
+
+    <!-- 03if的条件判断语句结果 -->
+    <script>
+        //null、undefined、0、NaN、空字符串、 视为false
+        if(!null) console.log("null");
+        if(!undefined) console.log("undefined");
+        if(!0) console.log("0");
+        if(!NaN) console.log("NaN");
+        if(!'')console.log("空字符串");
+    </script>
+</body>
+</html>

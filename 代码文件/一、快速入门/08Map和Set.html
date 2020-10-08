@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map和Set</title>
+</head>
+<body>
+    <!-- 01默认对象表示方式的缺点 -->
+    <script>
+        'use strict';
+        // 默认对象表示方式{}可以视为其他语言中的Map或Dictionary的数据结构，即一组键值对
+        // 但是JavaScript的对象有个小问题，就是键必须是字符串。但实际上Number或者其他数据类型作为键也是非常合理的
+    </script>
+
+    <!-- 02Map和Set-->
+    <script>
+        'use strict';
+        //特点
+        /*  ->Es6新增
+            ->键为任意数据类型
+            ->Map为键值对，键不可重复
+            ->Set为键，键不可重复
+         */
+
+        // Map
+        //1.创建方式
+            //方式一：默认初始化
+            var map = new Map();
+            map.set(1,'A');
+            map.set(undefined,'B');
+            map.set(null,'C');
+            console.log(map.get(1));//'A'
+            console.log(map.get(undefined));//'B'
+            console.log(map.get(null));//'C'
+            //方式二：使用二维数组初始化
+            var map = new Map([[1,"AA"],[undefined,"BB"]]);
+            console.log(map.get(1));//'AA'
+            console.log(map.get(undefined))//'BB'
+        //2.方法
+            var map = new Map();
+            //set
+            map.set('name','牛绍');
+            map.set('name','牛绍乾');//修改‘name’对应的值
+            //get
+            console.log(map.get('name'));//牛绍乾
+            //delete
+            map.delete('name');
+            console.log(map.get('name'));//undefined
+
+        //Set
+        //1.创建方式
+            //方式一：默认初始化
+            var set = new Set();
+            set.add("3");
+            set.add(3);
+            console.log(set);
+            //方式二：使用数组初始化
+            var set = new Set(["3",3]);
+            console.log(set);
+        //2.方法
+            var set = new Set(["3",3]);
+            //add
+            set.add("33");
+            console.log(set);
+            //delete
+            set.delete("33");
+            console.log(set);
+    </script>
+</body>
+</html>

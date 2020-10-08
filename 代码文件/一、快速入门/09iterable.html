@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iterable</title>
+</head>
+<body>
+    <!-- 01for-of -->
+    <script>
+        //1.iterable类型：Array，Map，Set
+        //2.具有iterable类型的集合可以通过新的for ... of循环来遍历。
+            //遍历数组
+            var arr = ['A','B'];
+            console.log("遍历数组");
+            for (const element of arr) {
+                console.log(element);
+            }
+            //遍历Map
+            var map = new Map([['name','牛绍乾'],['age',23],['birth','1998004']]);
+            console.log('遍历Map');
+            for (const element of map) {
+                console.log(element[0]+","+element[1]);//element为二维数组
+            }
+            //遍历Set
+            var set = new Set(['A','B']);
+            for (const element of set) {
+                console.log(element);
+            }
+        //3.for-of 与 for-in的区别
+        /* 总结：
+            -->for-in 本应会遍历对象的属性（本身和继承的属性），但在下例中对数组的length属性置之不理
+            -->for-of 只会访问数组本身的元素
+        */
+            //以数组举例
+            console.log("测试for-in 与 for-of")
+            //for-in
+            console.log("测试for-in")
+            var arr = ["A","B"];
+            arr.name = "我是数组arr";//注意数组也是对象
+            console.log("arr的length属性是自身的吗？"+arr.hasOwnProperty('length'));//true
+            for (const key in arr) {
+                console.log(arr[key]);//A,B,我是数组arr  --此时不包含length属性
+            }
+            //for-of
+            console.log("测试for-of");
+            var arr = ['A','B'];
+            arr.name = "我是数组arr";
+            for (const element of arr) {
+                console.log(element);//A,B  --此时只输出自身的元素，不再访问属性
+            }
+    </script>
+
+    <!-- 02forEach方法 -->
+    <script>
+        /* forEach方法总结：
+            -->遍历数组 参数 element,index,array
+            -->遍历Map 参数 value,key,map
+            -->遍历Set 参数 element,sameElement,set  (set与Array类似，但没有索引，第二个参数与第一参数意义相同)
+            -->注意：由于JavaScript的函数调用不要求参数必须一致，因此可以忽略部分。
+        */
+        //Es5.1标准
+        //遍历数组
+        var arr = ["A","B"];
+        arr.name = "我是数组arr"
+        arr.forEach(function(element,index,array){
+            console.log(`${element},${index},${array.name}`);//A,0,我是数组arr...
+        });
+        //遍历Map
+        var map = new Map([['name','niu'],['age',23]]);
+        map.name = "我是Map";
+        map.forEach(function(value,key,Nmap){
+            console.log(`${value},${key},${Nmap.name}`);        
+        });
+        //遍历Set
+        var set = new Set(["A","B"]);
+        set.name = "我是Set";
+        set.forEach((element,sameElement,Nset) => {
+            console.log(`${element},${sameElement},${Nset.name}`);
+        });
+        //由于JavaScript的函数调用不要求参数必须一致，因此可以忽略它们。
+        set.forEach(element => console.log(`${element}`));
+    </script>
+</body>
+</html>

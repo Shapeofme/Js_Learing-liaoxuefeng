@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>循环</title>
+</head>
+<body>
+    <!-- 01for循环 -->
+    <script>
+        //无限循环
+        var i = 0;
+        for(;;){
+            if( i++ == 20) break;
+            console.log("我在无限循环...");
+        }
+    </script>
+    
+    <!-- 02for-in循环 -->
+    <script>
+        //遍历对象的属性 字符串
+        //通过hasOwnProperty()过滤掉继承的属性
+        var person = {
+            name : "牛绍乾",
+            age : 23,
+            birth : "19981004",
+        };
+        for (var key in person) {
+            if (person.hasOwnProperty(key)) {
+                console.log(typeof key + ","+key);//string ，name...
+            }
+        }
+        //遍历数组
+        var arr = ['A','B','C','D'];
+        for (var key in arr) {
+            if (arr.hasOwnProperty(key)) {
+                console.log(typeof key + "," + key + "," +arr[key]);
+            }
+        }
+        //数组与对象的区别：数组作为对象，其属性为字符串形式的0,1,2,3...
+        //数组：索引->元素 0：‘A’ 1:'B' ...
+        //对象：属性->属性值 
+        var a = ['A','B'];
+        console.log(a['1']);//'B'
+    </script>
+
+    <!-- 03其他 -->
+    <script>
+        //while
+        //do-while
+    </script>
+</body>
+</html>

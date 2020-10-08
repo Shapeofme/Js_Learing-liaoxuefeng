@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>函数定义和调用</title>
+</head>
+<body>
+    <!-- 01定义函数 -->
+    <script>
+        //两种定义完全等价，注意第二种方式按照完整语法需要在函数体末尾加一个;，表示赋值语句结束。
+        "use strict";
+        //1.函数声明
+        function abs(x){
+            console.log("函数声明："+x);
+        }
+        //2.函数表达式
+        var coll = function(x){
+            console.log("函数表达式："+x);
+        };
+    </script>
+
+    <!-- 02调用函数 -->
+    <script>
+        "use strict";
+        //1.参数
+        var sum = function(a,b){
+            if(typeof b === "undefined") console.log("缺少的部分补undefined");
+            return a+b;
+        }
+        //由于JavaScript允许传入任意个参数而不影响调用，因此传入的参数比定义的参数多也没有问题，虽然函数内部并不需要这些参数
+        console.log(sum(10,20,"20"));
+        //传入的参数比定义的少也没有问题，会以undefined传入
+        console.log(sum(10));//undefined
+
+        //2.优化一：arguments
+        /* 特点：
+            ->它只在函数内部起作用，并且永远指向当前函数的调用者传入的所有参数 
+            ->类似Array但不是Array
+        */
+        var sum = function sum(a,b){
+            for (const ele of arguments) {
+                console.log(ele);
+            }
+        };
+        sum(1,2,3,4,5,6);
+        //可选参数
+        var test = function(a,b){
+            if(arguments.length === 1 && a !== undefined){
+                console.log(`第一个参数a：${a}`);
+            }else if(a === undefined && b !== undefined){
+                console.log(`第二个参数：${b}`);
+            }else if(!isNaN(a+b)){
+                console.log(`求和:${a+b}`);
+            }
+        };
+        test(1);
+        test(undefined,2);
+        test(1,2);
+
+        //3.优化二：rest
+        /* 特点：
+            -->Es6标准
+            -->rest参数只能写在最后，前面用...标识
+            -->多余的参数以数组形式交给变量rest;
+            -->如果传入的参数连正常定义的参数都没填满，rest参数会接收一个空数组
+         */
+        var sum = function(a,b,...rest){
+            console.log(a);
+            console.log(b);
+            console.log(rest);
+        }
+        sum();//undefined、undefined、[]
+        sum(1);//1、undefined、[]
+        sum(1,2);//1,2,[]
+        sum(1,2,3);//1,2,[3]
+
+        //4.返回值
+        /*
+            -->无return语句：返回undefined
+            -->有return语句：
+                return; return undefined; //返回undefined
+                return 其他； //不返回undefined
+            -->注意：莫要return分行，否则会"return undefined"  JavaScript引擎有一个在行末自动添加分号的机制
+         */
+        var t1 = function(){};
+        console.log(t1());//undefined
+        var t2 =function(){return ;};
+        console.log(t2());//undefined
+        var t3 = function(){return undefined;};
+        console.log(t3());//undefined
+        var t4 = function(){return 10;};
+        console.log(t4());//10
+        var t5 = function(){
+            return 
+                    10;
+        }
+        console.log(t5());//undefined
+    </script>
+</body>
+</html>
