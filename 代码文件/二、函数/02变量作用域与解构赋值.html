@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>变量作用域与解构赋值</title>
+</head>
+<body>
+    <!-- 01变量作用域 -->
+    <script>
+        /* 函数体作用域(var声明)：
+            -->JavaScript的变量作用域实际上是函数内部,在函数体外不可引用该变量
+            -->不同函数内部的同名变量互相独立，互不影响
+            -->函数的嵌套：
+                -内部函数可以访问外部函数定义的变量，反之不行
+                -函数在查找变量时从自身函数定义开始，从“内”向“外”查找。如果内部函数定义了与外部函数重名的变量，则内部函数的变量将“屏蔽”外部函数的变量
+            -->变量提升：
+                -先扫描整个函数体的语句，把所有申明的变量“提升”到函数顶部（仅提升变量的声明，但不会提升变量的赋值）
+                -由于此特性，所以要遵守“在函数内部首先申明所有变量”
+         */
+         /* 全局作用域（window对象）：
+            -->不在任何函数内定义的变量就具有全局作用域
+                -JavaScript默认有一个全局对象window，全局作用域的变量实际上被绑定到window的一个属性
+            -->任何变量（函数也视为变量），如果没有在当前函数作用域中找到，就会继续往上查找，最后如果在全局作用域中也没有找到，则报ReferenceError错误
+            -->名字空间：
+                -全局作用域的缺点：全局变量会绑定到window上，不同的JavaScript文件如果使用了相同的全局变量，或者定义了相同名字的顶层函数，都会造成命名冲突，并且很难被发现
+                -解决：把自己的所有变量和函数全部绑定到一个全局变量中
+        */
+        /*  块级（局部）作用域（）：
+            -->块级作用域即“只要存在{}，就为一作用域”
+            -->函数体作用域的缺点：由于JavaScript的变量作用域实际上是函数内部，我们在for循环等语句块中是无法定义具有局部作用域的变量的
+            -->解决：ES6引入了新的关键字let，用let替代var可以声明一个块级作用域的变量
+                    Es6标准 const常量
+         */
+    </script>
+    <script>
+        "use strict";
+        //  函数体作用域
+            //1.函数嵌套
+            var f1 = {};
+            f1.fun1 = function(){
+                var x = 100;
+                function bar(){
+                    var x = 1000;
+                }
+                console.log(`函数fun1:我是X=${x}`);
+            }
+            f1.fun1();
+            //外部函数与内部函数的变量名冲突--屏蔽
+            f1.fun2 = function(){
+                var x = 'x';
+                (function bar(){
+                    var y = 'y';
+                    console.log(`函数fun2:${x}+${y}`);
+                })();
+            }
+            f1.fun2();
+
+            //2.变量提升
+            //注意：在函数内部首先申明所有变量
+            f1.fun3 = function(){
+                console.log(`x=${x},y=${y},bar=${bar}`);//undefined*2,bar函数体
+                bar();
+                var x = 'x';
+                function bar(){
+                    console.log("我是bar函数");
+                }
+                var y = 'y';
+            }
+            f1.fun3();
+            f1.fun4 = function(){
+                let x,
+                    y,
+                    z;
+                x = 20;
+                y = 30;
+                z = 40;
+                console.log(`某点的空间坐标为(${x},${y},${z})`);
+            }
+            f1.fun4();
+    </script>
+    <script>
+        "use strict";
+        //全局作用域
+        //1.不在任何函数内定义的变量就具有全局作用域,作为window对象的属性
+        for (const key in window) {
+            if (window.hasOwnProperty(key)) {
+                if(window['f1'] === window[key])
+                    console.log("上一个script标签的f1对象存在于window对象中");
+            }
+        }
+        //2.任何变量（函数也视为变量），如果没有在当前函数作用域中找到，就会继续往上查找，最后如果在全局作用域中也没有找到，则报ReferenceError错误
+        function getf1(){
+            console.log("存在于上个标签中的f1 = "+f1);
+            // console.log("不存在的变量x = "+x);报错 ReferenceError
+        }
+        getf1();
+        //3.名字空间
+        //见上个标签的f1对象，f1对象最为window对象的一个属性，而其他变量均为f1的属性
+    </script>
+    <script>
+        "use strict";
+        //局部（块级）作用域
+        //var声明的缺陷
+        for(var i =0;i<10;i++){}
+        console.log(i);// 10 由此可见var不存在块级作用域，只存在函数体作用域
+
+        //Es6标准 let 增加块级作用域
+        for(let j = 0;j<10;j++){}
+        console.log(typeof j);//undefined
+
+        //Es6标准 const 定义常量
+        const PI = 3.14;
+        //PI = 3;会报错，不可更改
+        console.log(PI);
+    </script>
+
+    <!-- 02解构赋值 -->
+    <script>
+        /* 特点：
+            -->可以同时对一组变量进行赋值
+            数组：
+            -->对数组元素进行解构赋值时，多个变量要用[...]括起来
+            -->如果数组本身还有嵌套，也可以通过下面的形式进行解构赋值，注意嵌套层次和位置要保持一致
+            -->可以忽略某些元素
+            对象：
+            -->变量与属性必须同名，且使用{...}
+            -->可以直接对嵌套的对象属性进行赋值，只要保证对应的层次是一致的
+            -->如果对应的属性不存在，变量将被赋值为undefined
+                解决：使用默认值，这样就避免了不存在的属性返回undefined的问题
+            -->使用的变量名和属性名不一致 ： var {name : id} = person
+            -->有些时候，如果变量已经被声明了，再次赋值的时候，正确的写法也会报语法错误:
+                var x,y;
+                {x,y} = {name:"牛绍乾",age:23};//语法错误：Uncaught SyntaxError: Unexpected token '='
+                修正：
+                ({x,y} = {name:"牛绍乾",age:23});
+         */
+        "use strict";
+        //1.数组
+            var arr = ['A','B','C'];
+            var [x,y,z] = arr;
+            console.log(x+","+y+","+z);//A,B,C
+            //嵌套数组
+            var arr = [['A','B'],[12,13],'Book'];
+            var [x,[num1,num2],str] = arr;
+            console.log(`${Array.isArray(x)},${num1},${num2},${str}`);//true,12,13,Book
+            //忽略某些元素
+            var [,,z] = ['A','B','C'];
+            console.log(z);//C
+        
+        //2.对象
+            //{...}内的属性必须匹配对象中的
+            var person = {
+                name : "牛绍乾",
+                age : 23,
+                isMarry : false,
+                birth : "19981004",
+            }
+            var {name,isMarry,birth} = person;
+            console.log(`${name},${isMarry},${birth}`);//牛绍乾,false,19981004
+            //{...}内不匹配的属性赋予undefined
+            var {name,name1} = person;
+            console.log(`name = ${name},name1 = ${name1}`);//"牛绍乾",undefined
+            //使用默认值，这样就避免了不存在的属性返回undefined的问题
+            var {name , name1 = "不存在的属性"} = person;
+            console.log(`name = ${name},mane1 = ${name1}`);//"牛绍乾"，“不存在的属性”
+            //使用的变量名和属性名不一致
+            var {name : name1} = person;
+            console.log(`name1 = ${name1}`);//"牛绍乾"
+            // 有些时候，如果变量已经被声明了，再次赋值的时候，正确的写法也会报语法错误
+            var x,y;
+            //{x,y} = {x:"牛绍乾",y : 23};//语法错误：Uncaught SyntaxError: Unexpected token '='
+            ({x,y} = {x:"牛绍乾",y : 23});
+            console.log(`x = ${x},y = ${y}`)
+
+            //应用
+            //交换数，作为参数的对象
+            var obj = {
+                x : 20,
+                y : 30,
+                fun : function({x,y}){
+                    console.log(`交换前：x = ${x},y = ${y}`);
+                    ({x,y} = {y,x});
+                    console.log(`交换后：x = ${x},y = ${y}`);
+                },
+            };
+            obj.fun(obj);
+    </script>
+</body>
+</html>
