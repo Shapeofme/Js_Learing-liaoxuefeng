@@ -3,9 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="all.js"></script>
     <title>Date</title>
 </head>
 <body>
-    
+    <script>
+        /* 总结：
+            1.获取系统当前的时间
+            2.创建一个指定日期和时间的Date对象
+                ->方式一：new Date(2020,9,11,20,44,30,400)
+                ->方式二：new Date(Date.parse("2020-10-11T20:47:30+08:00")); 即 new Date(时间戳)
+            3.时区
+        */
+        let myObj = {};
+        //1.获取系统当前时间
+        myObj.now = new Date();
+        myObj.now.t1 = myObj.now; // Sun Oct 11 2020 20:37:21 GMT+0800
+        myObj.now.t2 = myObj.now.getFullYear(); // 2020, 年份
+        myObj.now.t3 = myObj.now.getMonth(); // 9, 月份，注意月份范围是0~11，5表示十月
+        myObj.now.t4 = myObj.now.getDate(); // 11, 表示24号
+        myObj.now.t5 = myObj.now.getDay(); // 0, 表示星期日
+        myObj.now.t6 = myObj.now.getHours(); // 20, 24小时制
+        myObj.now.t7 = myObj.now.getMinutes(); // 37, 分钟
+        myObj.now.t8 = myObj.now.getSeconds(); // 21, 秒
+        myObj.now.t9 = myObj.now.getMilliseconds(); // 400, 毫秒数
+        myObj.now.t10 = myObj.now.getTime(); // 1602419841400, 以number形式表示的时间戳
+        ptr2(myObj.now);
+
+        //2.创建一个指定日期和时间的Date对象
+        //方式一：
+        myObj.self = new Date(2020,9,11,20,44,30,400);//Sun Oct 11 2020 20:44:30 GMT+0800 (China Standard Time)
+        console.log(myObj.self);
+        //方式二：创建一个指定日期和时间的方法是解析一个符合ISO 8601格式的字符串
+        //使用Date.parse()时传入的字符串使用实际月份01~12，转换为Date对象后getMonth()获取的月份值为0~11
+        myObj.d = Date.parse("2020-10-11T20:47:30+08:00");
+        console.log(myObj.d);//1602445650000
+        myObj.self1 = new Date(myObj.d);
+        console.log(myObj.self1);//Sun Oct 11 2020 20:47:30 GMT+0800 (China Standard Time)
+
+        //3.时区
+        //问题一：在JavaScript中如何进行时区转换呢？
+        // 实际上，只要我们传递的是一个number类型的时间戳，我们就不用关心时区转换。任何浏览器都可以把一个时间戳正确转换为本地时间
+        //问题二：时间戳是个什么东西？
+        //时间戳是一个自增的整数，它表示从1970年1月1日零时整的GMT时区开始的那一刻，到现在的毫秒数。假设浏览器所在电脑的时间是准确的，那么世界上无论哪个时区的电脑，它们此刻产生的时间戳数字都是一样的，所以，时间戳可以精确地表示一个时刻，并且与时区无关。
+        var d = new Date(1602419841400);
+        console.log(d.toLocaleString()); // 10/11/2020, 8:37:21 PM （加8小时即下面的）
+        console.log(d.toUTCString()); // Sun, 11 Oct 2020 12:37:21 GMT
+    </script>
 </body>
 </html>
