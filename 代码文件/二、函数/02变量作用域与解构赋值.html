@@ -134,6 +134,10 @@
                 {x,y} = {name:"牛绍乾",age:23};//语法错误：Uncaught SyntaxError: Unexpected token '='
                 修正：
                 ({x,y} = {name:"牛绍乾",age:23});
+
+            应用：
+            -->对象作为参数
+            -->交换变量
          */
         "use strict";
         //1.数组
@@ -174,17 +178,19 @@
             console.log(`x = ${x},y = ${y}`)
 
             //应用
-            //交换数，作为参数的对象
+            //作为参数的对象
             var obj = {
                 x : 20,
                 y : 30,
                 fun : function({x,y}){
-                    console.log(`交换前：x = ${x},y = ${y}`);
-                    ({x,y} = {y,x});
-                    console.log(`交换后：x = ${x},y = ${y}`);
+                    console.log(`x = ${x},y = ${y}`);
                 },
             };
             obj.fun(obj);
+            //交换变量
+            var x = 1,y = 2;
+            [x,y] = [y,x];
+            console.log(`x = ${x}, y = ${y}`);//2,1
     </script>
 </body>
 </html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>方法</title>
+</head>
+<body>
+    <!-- 01方法 -->
+    <script>
+        // 在一个对象中绑定函数，称为这个对象的方法
+        var person = {
+            name : "牛绍乾",
+            age : 23,
+            getStr : function(){
+                console.log(this.name +":"+this.age);
+            }
+        };
+        person.getStr();
+    </script>
+
+    <!-- 02this-->
+    <script>
+        /*  this的指向：
+                -->普通的函数调用（指向window对象）
+                -->作为对象的方法调用（指向上一级对象）
+                -->作为构造方法调用（this指向创建的新对象）
+                -->apply和call（this指向第一个参数）
+                    -区别：apply()把参数打包成Array再传入；call()把参数按顺序传入
+            this的设计错误：
+                -->将对象的方法作为变量赋值后，再以普通函数调用，会导致this指向window对象
+                    解决：1.始终使用obj.pro调用
+                          2.在strict模式下让函数的this指向undefined（错误：Uncaught TypeError: Cannot read property 'birth' of undefined）
+                -->对象方法中嵌套函数
+                    解决：见下
+            
+         */
+        //1.this的指向
+            //普通的函数调用（指向window对象）
+            window.name = "window";
+            function f1(){
+                console.dir(this.name);
+            }
+            f1();//window
+            //作为对象的方法调用（指向上一级对象）
+            var person = {
+                name : "person",
+                f1 : f1,
+            };
+            person.f1();//person
+            //作为构造方法调用（this指向创建的新对象）
+            function Student(){
+                this.name = "Student";
+                this.f1 = f1;
+            }
+            var stu = new Student();
+            stu.f1();//Student
+            //apply和call（this指向第一个参数）
+            stu.f1.apply(null,[1,2,3]);//以普通函数调用
+            stu.f1.call(person,1,2,3);//以person对象方法调用
+        //2.this的设计错误
+            window.name = "我不是牛绍乾";
+            var person = {
+                name : "牛绍乾",
+                age : 23,
+                f2 :function(){
+                    console.log(this.name+","+this.age);
+                },
+            };
+            //普通调用方式
+            person.f2();//牛绍乾，23
+            //其他调用方式
+            var f22 = person.f2;
+            f22();//我不是牛绍乾，23
+            //对象方法中嵌套函数
+            var person  = {
+                name : "牛绍乾",
+                f2 : function(){
+                    var a = function(){
+                        return this.name;
+                    }
+                    return a();
+                },
+            };
+            console.log(person.f2());//我不是牛绍乾
+            //解决方法：
+            var person  = {
+                name : "牛绍乾",
+                f2 : function(){
+                    var that = this;
+                    var a = function(){
+                        return that.name;
+                    }
+                    return a();
+                },
+            };
+            console.log(person.f2());//牛绍乾
+    </script>
+</body>
+</html>

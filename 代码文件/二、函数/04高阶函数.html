@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高阶函数</title>
+</head>
+
+<body>
+    <!-- 01map/reduce -->
+    <script>
+        /* 总结：
+            -->map()返回数组,reduce()返回值
+            -->map()方法定义在JavaScript的Array中，我们调用Array的map()方法，传入我们自己的函数
+            -->Array的reduce()把一个函数作用在这个Array的[x1, x2, x3...]上，这个函数必须接收两个参数，reduce()把结果继续和序列的下一个元素做累积计算
+            -->注意：1.map和reduce中回调函数的参数为（element,index,array） 等同于Array.forEach方法
+                    2.实际传入的函数的参数与map和reduce的回调函数参数匹配问题  parseInt参数（见下）
+         */
+        "use strict";
+        //名称空间
+        var myObj = {};
+        myObj.arr = [1, 2, 3, 4];
+        //map
+        console.log("map:");
+        myObj.result = myObj.arr.map(Math.pow); //Math.pow(num,幂数值);
+        console.log(myObj.result);
+        console.log("arr:" + myObj.arr);
+        //自定义map
+        myObj.arr.map1 = function (pow) {
+            var narr = [];
+            narr.length = this.length;
+            this.forEach((element, index, arr) => {
+                narr[index] = pow(element, index);
+            });
+            narr[narr.length] = "自定义map";
+            return narr;
+        };
+        myObj.result1 = myObj.arr.map1(Math.pow);
+        console.log(myObj.result1);
+        console.log("arr:" + myObj.arr);
+        //map举例二
+        myObj.result2 = myObj.arr.map(String); //String(par)转换为字符串
+        console.log(myObj.result2);
+
+        //reduce
+        console.log("reduce:");
+        myObj.result3 = myObj.arr.reduce((x, y) => {
+            console.log(x + "," + y);
+            return x + y;
+        });
+        console.log(myObj.result3);
+        //自定义reduce
+        myObj.arr.reduce1 = function(fun){
+            var sum = 0;
+            this.forEach((ele,index,array) =>{
+                if(index == array.length-1) return;
+                sum += fun(array[index],array[index+1]);
+            });
+            return (sum+this[0]+this[this.length-1])/2;
+        };
+        console.log(myObj.arr.reduce1((x,y) =>{
+            return x+y;
+        }));
+
+        //map思考
+        console.log("map思考：");
+        myObj.arr1 = [];
+        myObj.arr1[0] = '1';
+        myObj.arr1[1] = '2';
+        myObj.arr1[2] = '3';
+        myObj.arr1[3] = '22';
+        myObj.arr1[16] = '25';
+        var r = myObj.arr1.map(parseInt);
+        console.log(r);//1,NaN,NaN,8,37为什么？
+        //分析
+        //01parseInt函数的参数 第二个参数：如果省略该参数或其值为 0，则数字将以 10 为基础来解析。如果它以 “0x” 或 “0X” 开头，将以 16 为基数.如果该参数小于 2 或者大于 36，则 parseInt() 将返回 NaN。
+        console.log(parseInt("10.23"));//10
+        console.log(parseInt("102ASD"));//102
+        console.log(parseInt("25",16));//2*16+5*1
+        console.log(parseInt('1',0));//1
+        console.log(parseInt('2',1));//NaN 以1为基底的进制不存在的
+        console.log(parseInt('3',2));//NaN 3不能是二进制数
+        console.log(parseInt('22',3));//8
+        console.log(parseInt('25',16));//37
+    </script>
+
+    <!-- 02filter -->
+    <script>
+        /* 总结：
+            -->Array的filter()也接收一个函数。filter()把传入的函数依次作用于每个元素，然后根据返回值是true还是false决定保留还是丢弃该元素。
+            -->filter()接收的回调函数，其实可以有多个参数。通常我们仅使用第一个参数，表示Array的某个元素。回调函数还可以接收另外两个参数，表示元素的位置和数组本身
+            -->&与&& :  & 左右通吃；&& 仅在true时左右通吃
+         */
+        "use strict";
+        let myObj1 = {};
+        myObj1.arr = [1,2,3,4];
+        console.log("filter:");
+        //1.简单使用
+        myObj1.result = myObj1.arr.filter((x) =>{
+            return x>=3 ? true:false;
+        });
+        console.log(myObj1.result);//[3,4]
+        //2.练习(回调函数的参数)
+        //筛选掉重复元素
+        console.log("练习：筛选重复值");
+        myObj1.arr1 = [1,23,34,34,23,1,4,"k","j","k"];
+        myObj1.result1 = myObj1.arr1.filter((ele,index,array) =>{
+            return array.indexOf(ele) === index;
+        });
+        console.log(myObj1.result1);//[1, 23, 34, 4, "k", "j"]
+        //3.&与&& 
+        // & 左右通吃；&& 仅在true时左右通吃
+        console.log("&与&&：");
+        var ce;
+        false & (ce = 100);
+        console.log("&测试:"+ce);//100
+        var ce1;
+        false && (ce1 = 100);
+        console.log("&&测试："+ce1);//undefined
+
+    </script>
+
+    <!-- 03sort -->
+    <script >
+        /* 总结：
+            -->Array的sort()方法默认把所有元素先转换为String再按照ascii码排序
+            -->对于两个元素a和b，
+                a 大于 b 返回一个大于0的值，a在b位置的后面
+                a 等于 b 返回一个等于0的值，a、b位置不变
+                a 小于 b 返回一个小于0的值，a在b位置的前面
+            -->会在原数组基础上改变
+            -->参数：（last，front）
+         */
+        "use strict";
+        console.log("sort：");
+        let myObj2 = {};
+        //1.sort的默认处理 --会在原数组基础上改变
+        myObj2.arr = ["ab","aa","ca","ba"];
+        console.log(myObj2.arr.sort());//["#", "%", "aa", "ab", "ba", "ca"]
+        myObj2.arr1 = [1,2, ,21,20,12,10,"&"];
+        console.log(myObj2.arr1.sort());//["&", 1, 10, 12, 2, 20, 21, empty]
+        //2.自定义排序
+        myObj2.arr2 = [1,5,2,4];
+        console.log(myObj2.arr2);
+        myObj2.arr2.sort((last,front,l) =>{
+            // console.log(l);//undefined  测试是否与(ele,index,array)相同？ 不同
+            if(last%2 == 0 && last>front) return -1;
+            else return 1;
+        });
+        console.log(myObj2.arr2);
+    </script>
+
+    <!-- 04其他 -->
+    <script>
+        /*  1.every()方法可以判断数组的所有元素是否满足测试条件。
+            2.find()方法用于查找符合条件的第一个元素，如果找到了，返回这个元素，否则，返回undefined：  
+            3.findIndex()和find()类似，也是查找符合条件的第一个元素，不同之处在于findIndex()会返回这个元素的索引，如果没有找到，返回-1：
+            4.forEach()和map()类似，它也把每个元素依次作用于传入的函数，但不会返回新的数组。forEach()常用于遍历数组，因此，传入的函数不需要返回值：
+        */
+        "use strict";
+        //1.every
+        console.log("every测试:");
+        var arr = [1,2,3,4,5];
+        console.log(arr.every(function(ele,index,array){
+            return typeof ele === "number";
+        }));
+        console.log(arr.every((ele) => {
+            console.log(ele);
+            return ele<2;
+        }));
+        //2.find
+        console.log("find测试:");
+        var arr = [null,"per","Cdd"];
+        console.log(arr.find(function(ele,index,array){
+            return String(ele).toLocaleLowerCase() === String(ele);
+        }));//null
+        //3.findIndex
+        console.log("findIndex测试：");
+        console.log(arr.findIndex((ele,index,array) =>{
+            return String(ele).toLocaleLowerCase() === String(ele);
+        }));//0
+        //4.forEach 常用语遍历数组，因此不需要返回值
+        console.log("forEach测试：");
+        arr.forEach(console.log);
+    </script>
+</body>
+
+</html>

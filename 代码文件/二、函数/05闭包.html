@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闭包</title>
+</head>
+
+<body>
+    <h1>存在疑惑</h1>
+    <!-- 01闭包 -->
+    <script>
+        // 总结：能否形成闭包，是看内部函数引用的变量是局部的还是全局的
+        /*  1.函数作为返回值
+            2.闭包：当一个函数返回了一个函数后，其内部的局部变量还被新函数引用
+            3.立即执行函数 (function (x) { return x * x }) (3);
+            4.注意：返回的函数不要引用任何循环变量，或者后续会发生变化的变量。（举例见下）
+        */
+        "use strict";
+    </script>
+
+    <script>
+        //for循环中的闭包 & let和var的混用对比
+        //总结：能否形成闭包，是看内部函数引用的变量是局部的还是全局的
+
+        //let i,let a,var fn
+        /* let list = [];
+        for(let i =0;i<10;i++){
+            let a = 3;
+            a+=i;
+            var fn = function(){
+                console.log(a);
+            };
+            list.push(fn);
+        }
+        fn();
+        list[5]();
+        list[6]();//12,8,9 */
+
+        //let i,var a,var fn 
+        //能否形成闭包是看引用的变量是局部的还是全局的
+        //测试一
+        /* let list = [];
+        for(let i =0;i<10;i++){
+            var a = 3;
+            a+=i;
+            var fn = function(){
+                console.log(a);
+            };
+            list.push(fn);
+        }
+        fn();
+        list[5]();
+        list[6]();//12,12,12 */
+        //测试二
+        /* let list = [];
+        for(let i =0;i<10;i++){
+            var a = 3;
+            var fn = function(){
+                console.log(a+i);
+            };
+            list.push(fn);
+        }
+        fn();
+        list[5]();
+        list[6]();//12,8,9 */
+
+        //let i,let a,let fn 
+        /* for(let i =0;i<10;i++){
+            let a = 3;
+            a+=i;
+            let fn = function(){
+                console.log(a);
+            };
+            list.push(fn);
+        }
+        fn();
+        list[5]();
+        list[6]();//Uncaught ReferenceError: list is not defined */
+
+        //var i,let a,var fn
+        /* let list = [];
+        for(var i =0;i<10;i++){
+            let a = 3;
+            a+=i;
+            var fn = function(){
+                console.log(a);
+            };
+            list.push(fn);
+        }
+        fn();
+        list[5]();
+        list[6]();//12,8,9 */
+
+        //举例：
+        /* var a = [];
+        let b;
+        let c;
+        for (let i = 0; i < 10; i++) {
+            b = i;
+            c = i;
+            var n = i;
+            let m = i;
+            a[i] = function oo() {
+                console.log(i);//6
+                console.log(c);//9
+                console.log(n);//9
+                console.log(m);//6
+            };
+        }
+        a[6](); */
+    </script>
+
+    <script>
+        //对var和let作用域用闭包的特性做最好的解释
+        //let声明
+        /* for(let i =0;i<=3;i++){
+            console.log("K:"+i);
+            setInterval(()=>{
+                console.log(i++);//0,1,2,3
+            },5000);
+        } */
+        //var声明
+        /* for (var i = 0; i <= 3; i++) {
+            console.log("K:" + i);
+            setInterval(() => {
+                console.log(a++); //4,5,6,7
+            }, 5000);
+        } */
+        //修正后的
+        /* for(var i =0;i<=3;i++){
+            console.log("K:"+i);
+            (function(a){
+                setInterval(()=>{
+                console.log(a++);//0,1,2,3
+                },5000);
+            })(i);
+        } */
+    </script>
+
+    <script>
+        //关于let和var在循环中造成的影响
+        /* for(let i = 0;i<3;i++){
+            setTimeout(function(){
+                console.log("let:"+i);
+            },100);
+        }
+        console.log("let:"+i);
+
+        for(var i = 0;i<3;i++){
+            setTimeout(function(){
+                console.log("var:"+i);
+            },100);
+        }
+        console.log("win:"+window.i); */
+
+        //如何模拟出var的伪块作用域 
+        //思路很简单，通过立即执行函数，把var i 的值再每次循环中传递到立即执行函数中，从而立即执行函数中的setTimeout不管延迟多秒，取得的都不是全局window的i，而是每一次循环叠加传递的i的副本形参。
+        /* for (var i = 0; i < 3; i++) {
+            (function (a) {
+                setTimeout(function () {
+                    console.log("var修正:" + a);
+                }, 100);
+            }(i));
+        } */
+    </script>
+
+    <!-- 02举例 -->
+    <script>
+        /*  'use strict';
+
+        // 定义数字0:
+        var zero = function (f) {
+            return function (x) {
+                return x;
+            }
+        };
+
+        // 定义数字1:
+        var one = function (f) {
+            return function (x) {
+                return f(x);
+            }
+        };
+
+        // 定义加法:
+        function add(n, m) {
+            return function (f) {
+                return function (x) {
+                    return m(f)(n(f)(x));
+                }
+            }
+        }
+
+        // 计算数字2 = 1 + 1:
+        var two = add(one, one);
+
+        // 计算数字3 = 1 + 2:
+        var three = add(one, two);
+        // 打印k次:
+        (two(function () {
+            console.log('print 2 times');//打印2次
+        }))();
+        (three(function () {
+            console.log('print 3 times');//打印3次
+        }))(); */
+    </script>
+</body>
+
+</html>

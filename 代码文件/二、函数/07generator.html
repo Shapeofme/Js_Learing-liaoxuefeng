@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>generator</title>
+</head>
+
+<body>
+    <!-- 01generator -->
+    <script>
+        /* 总结：
+            -->作用：generator可以在执行过程中多次返回，所以它看上去就像一个可以记住执行状态的函数，且返回generator对象
+            -->定义：function* yield语句    普通函数function
+            -->调用generator对象的方法：
+                -next() 返回值：{value: 0, done: false} -> {value: undefined, done: true}
+                -for-of 仅输出value值
+            -->相对普通函数的优点：
+                -generator可以在执行过程中多次返回，所以它看上去就像一个可以记住执行状态的函数，利用这一点，写一个generator就可以实现需要用面向对象才能实现的功能
+                -generator还有另一个巨大的好处，就是把异步回调代码变成“同步”代码（AJAX）
+        */
+        //1.普通函数 --生成斐波那契数列
+        var fun = function (max) {
+            var
+                t,
+                a = 0,
+                b = 1,
+                arr = [0, 1];
+            while (arr.length < max) {
+                [a, b] = [b, a + b];
+                arr.push(b);
+            }
+            return arr;
+        };
+        console.log(fun(5)); //[] 返回一个数组
+        //2.generator --生成斐波那切数列
+        function* fib(max) {
+            var
+                t,
+                a = 0,
+                b = 1,
+                n = 0;
+            while (n < max) {
+                yield a;
+                [a, b] = [b, a + b];
+                n++;
+            }
+            return;
+        }
+        console.log(fib(5)); //返回generator对象
+        var gen = fib(5);
+        //调用generator方法
+        //方式一：next()
+        var {value,done} = gen.next();
+        console.log(`value:${value},done:${done}`); //{value: 0, done: false}
+        console.log(gen.next()); //{value: 1, done: false}
+        console.log(gen.next()); //{value: 1, done: false}
+        console.log(gen.next()); //{value: 2, done: false}
+        console.log(gen.next()); //{value: 3, done: false}
+        console.log(gen.next()); //{value: undefined, done: true}
+        //方式二：for-of
+        /* for (const ele of gen) {
+            console.log(ele);//0,1,1,2,3
+            console.log(`value:${ele.value},done:${ele.done}`);//undefined,undefined
+        } */
+    </script>
+</body>
+
+</html>

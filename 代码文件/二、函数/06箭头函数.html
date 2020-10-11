@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>箭头函数</title>
+</head>
+
+<body>
+    <h1>存在疑惑</h1>
+    <!-- 01箭头函数 -->
+    <script>
+        /* 总结：
+            -->Es6标准
+            -->两种格式：
+                -只包含一个表达式，连{ ... }和return都省略掉
+                -可以包含多条语句，这时候就不能省略{ ... }和return 
+        */
+        //1.
+        var fun = x => x * x;
+        console.log(fun(20)); //400
+        //2.
+        var fun = (x, y) => {
+            return x + y;
+        };
+        console.log(fun(10, 20));
+        //3.返回一个对象
+        var fun = x => ({
+            name: "牛绍乾"
+        });
+        console.log(fun());
+    </script>
+
+    <!-- 02this -->
+    <script>
+        /* 总结：
+            -->箭头函数和匿名函数有个明显的区别：箭头函数内部的this是词法作用域，由上下文确定。
+            -->由于this在箭头函数中已经按照词法作用域绑定了，所以，用call()或者apply()调用箭头函数时，无法对this进行绑定，即传入的第一个参数被忽略
+            -->词法作用域与动态作用域：
+                -词法作用域是在定义时确定的（定义的位置），而动态作用域是在运行时确定的（作用域链）
+                -javascript使用的是词法作用域，它最重要的特征是它的定义过程发生在代码的书写阶段
+                -动态作用域与this的作用机制相类似 
+        */
+        //词法作用域与动态作用域
+        //词法作用域-->如果处于词法作用域，也就是现在的javascript环境。变量a首先在foo()函数中查找，没有找到。于是顺着作用域链到全局作用域中查找，找到并赋值为2。所以控制台输出2
+        //动态作用域-->如果处于动态作用域，同样地，变量a首先在foo()中查找，没有找到。这里会顺着调用栈在调用foo()函数的地方，也就是bar()函数中查找，找到并赋值为3。所以控制台输出3
+        var a = 2;
+
+        function foo() {
+            console.log(a);
+        }
+
+        function bar() {
+            var a = 3;
+            foo();
+        }
+        bar(); //2  说明是词法作用域
+
+        //this的问题
+        var person = {
+            name: "牛绍乾",
+            getName: function () {
+                return function () {
+                    return this.name;
+                }
+            },
+        };
+        var fun1 = person.getName();
+        var name = "不是牛绍乾";
+        console.log(fun1()); //我不是牛绍乾  在window中调用，说明是动态作用域
+        //解决方式一：
+        var person = {
+            name: "牛绍乾",
+            getName: function () {
+                var that = this;
+                return function () {
+                    return that.name;
+                }
+            },
+        };
+        var fun1 = person.getName();
+        var name = "不是牛绍乾";
+        console.log(fun1()); //牛绍乾
+        //解决方式二；箭头函数
+        var person = {
+            name: "牛绍乾",
+            getName: function () {
+                return () => this.name; //词作用域，所以为person.name
+            },
+        };
+        var fun1 = person.getName();
+        var name = "不是牛绍乾";
+        console.log(fun1()); //牛绍乾
+
+        //由于this在箭头函数中已经按照词法作用域绑定了，所以，用call()或者apply()调用箭头函数时，无法对this进行绑定，即传入的第一个参数被忽略
+        var obj = {
+            birth: 1990,
+            getAge: function (year) {
+                var b = this.birth; // 1990
+                var fn = (y) => y - this.birth; // this.birth仍是1990
+                return fn.call({birth: 2000}, year);
+            }
+        };
+        console.log(obj.getAge(2015)); //25
+    </script>
+</body>
+
+</html>
