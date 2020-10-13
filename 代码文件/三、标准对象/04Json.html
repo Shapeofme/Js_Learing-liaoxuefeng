@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Json</title>
+</head>
+<body>
+    <!-- 01语法 -->
+    <script>
+        /* 
+        1、数据类型
+            >简单值：字符串、数值、布尔值、null
+                ->不支持undefined
+                ->字符串必须使用双引号
+            >对象：键值对，每个键值对中的值可以是简单值，也可是复杂值
+                ->属性必须加双引号
+                ->同一个对象不能出现两个相同的属性
+            >数组：数组的值可以是任意类型-简单值、复杂值
+                ->采用数组字面量形式
+            >注意：
+                ->Json中没有变量、函数、对象实例的概念
+                ->没有分号
+                ->Json数据结构的最外层形式通常是对象和数组
+        2.序列化
+            >JSON.stringfy()
+                总结：
+                    ->三个参数：要序列化的对象，过滤器（可以是一个数组或函数），一个选项（是否在JSON中保留缩进）
+                    ->会忽略函数及原型成员，undefined也会被跳过，不报错
+
+                第一个参数：要序列化的对象
+                    
+                第二个参数：过滤器(数组或函数)
+                    数组：
+                    ->存储要筛选的属性；
+                    ->返回的结果只包括数组中要求的属性对应值 及 符合语法规则的值（不支持undefined）
+                    函数：
+                    ->参数：key，value
+                    ->返回符合语法规则的值（不支持undefined）
+                    ->第一次调用该函数时，传入的参数为键值对{"":book}，所以default能很好的避免问题，且可以输入所有属性；
+                    不使用default：必须保证 case "" : return value (value 即对象本身)
+                
+                第三个参数：缩进选项
+                    数值：缩进的空格数 范围-不超过10
+                    字符串：缩进的字符串数
+            >toJSON()
+                ->类似于console.log()会自动调用对象的toString方法
+                ->将对象传入JSON.stringify()中，调用顺序：
+                    1.toJSON（如果有就执行）
+                    2.stringify的第二、三个参数
+                ->不要使用箭头函数，箭头函数没有自己的this，会沿作用域链寻找
+        3.反序列化（解析）
+            >参数
+            >第一个参数：
+                字符串：传入的JSON字符串不合法，会抛出异常
+            >第二参数：（还原）函数
+                ->该函数与JSON.stringify()的第二个参数类似
+                ->注：对象实例会被转换为字符串,然后存储到JSON字符串中
+         */
+    </script>
+
+    <!-- 02序列化 -->
+    <script>
+         //1.JSON.stringfy()
+        /* 
+        总结：
+            ->三个参数：要序列化的对象，过滤器（可以是一个数组或函数），一个选项（是否在JSON中保留缩进）
+            ->会忽略函数及原型成员，undefined也会被跳过，不报错
+
+        第一个参数：要序列化的对象
+            
+        第二个参数：过滤器(数组或函数)
+            数组：
+            ->存储要筛选的属性；
+            ->返回的结果只包括数组中要求的属性对应值 及 符合语法规则的值（不支持undefined）
+            函数：
+            ->参数：key，value
+            ->返回符合语法规则的值（不支持undefined）
+            ->第一次调用该函数时，传入的参数为键值对{"":book}，所以default能很好的避免问题，且可以输入所有属性；
+              不使用default：必须保证 case "" : return value (value 即对象本身)
+        
+        第三个参数：缩进选项
+            数值：缩进的空格数 范围-不超过10
+            字符串：缩进的字符串数
+        */
+
+        "use strict";
+        console.log("JSON.stringfy函数:");
+        //第一个参数：要序列化的对象
+        var book = {
+            title : "我的书",
+            authors : ["牛绍乾","乾隆"],
+            edition : 3,
+            year : 2020
+        };
+        var jsonText = JSON.stringify(book);
+        console.log(jsonText);//{"title":"我的书","authors":["牛绍乾","乾隆"],"edition":3,"year":2020}
+        //测试不合JSON语法规则的
+        var a = 10;
+        var book = {
+            title : "我的是",
+            authors : undefined,//undefined
+            edition : a,//变量
+            getTitle : function(){ //函数
+                return this.title;
+            }
+        };
+        var jsonText = JSON.stringify(book);
+        console.log(jsonText);//{"title":"我的是","edition":10}
+
+        //第二个参数：过滤器（一个包含了要序列化对象中属性的数组，函数）
+        //数组：返回的结果只包括数组中要求的属性对应值
+        //如果数组中的属性不存在 --> undefined --> 跳过
+        var book = {
+            title : "我的书",
+            authors : ["牛绍乾","乾隆"],
+            edition : 3,
+            year : 2020
+        };
+        var jsonText = JSON.stringify(book,["title","edition"]);
+        // var jsonText = JSON.stringify(book,["ti","edition"]);//{"edition":3}
+        console.log(jsonText);//{"title":"我的书","edition":3}
+        //函数
+        /* 
+            1.参数：key ， value
+            2.返回undefined会被忽略
+            3.第一次调用该函数时，传入的参数为键值对{"":book}，所以default能很好的避免问题，且可以输入所有属性；
+              不使用default：必须保证 case "" : return value (value 即对象本身)
+         */
+        //测试一：
+        var book = {
+            title : "我的书",
+            authors : ["牛绍乾","乾隆"],
+            edition : 3,
+            year : 2020,
+        };
+        var jsonText = JSON.stringify(book,function(key,value){
+            switch(key){
+                case 'title':return value+"by牛";
+                case 'authors' : return value[0];
+                case 'edition' : return undefined;
+                default : return value;
+            }
+        });
+        console.log(jsonText);//{"title":"我的书by牛","authors":"牛绍乾","year":2020}
+        //测试二：不使用default
+        var book = {
+            title : "我的书",
+            authors : ["牛绍乾","乾隆"],
+            edition : 3,
+            year : 2020,
+        };
+        var jsonText = JSON.stringify(book,function(key,value){
+            switch(key){
+                case 'title':return value+"by牛";
+                case 'authors' : return value[0];
+                case 'edition' : return undefined;
+                case '' : return value;
+            }
+        });
+        console.log(jsonText);//{"title":"我的书by牛","authors":"牛绍乾"}
+        //测试三：证明第一次调用该函数时，传入的参数为键值对{"":book}
+        var book = {
+            title : "我的书",
+            authors : ["牛绍乾","乾隆"],
+            edition : 3,
+            year : 2020,
+        };
+        var jsonText = JSON.stringify(book,function(key,value){
+            switch(key){
+                case '' : return value === book;
+            }
+        });
+        console.log(jsonText);//true
+
+        //第三个参数：字符串缩进
+        /* 
+            1.作用：控制结果中的缩进和空白符
+            2.数值：最大数值为10，用于缩进的空格数
+            3.字符串：用于缩进的字符串
+         */
+        var book = {
+            title : "我的书",
+            authors : ["牛绍乾","乾隆"],
+            edition : 3,
+            year : 2020,
+        };
+        // var jsonText = JSON.stringify(book,null,"---");
+        var jsonText = JSON.stringify(book,null,4);
+        console.log(jsonText);
+        /*
+        数值
+         {
+            "title": "我的书",
+            "authors": [
+                "牛绍乾",
+                "乾隆"
+            ],
+            "edition": 3,
+            "year": 2020
+        }
+        字符串
+        {
+        ---"title": "我的书",
+        ---"authors": [
+        ------"牛绍乾",
+        ------"乾隆"
+        ---],
+        ---"edition": 3,
+        ---"year": 2020
+        }
+        */
+    </script>
+    <script>
+        "use strict";
+        console.log("toJSON方法：");
+        //2.toJSON方法
+        /* 
+            ->类似于console.log()会自动调用对象的toString方法
+            ->将对象传入JSON.stringify()中，调用顺序：
+                1.toJSON（如果有就执行他）
+                2.stringify的第二、三个参数
+         */
+        var book = {
+            title : "我的书",
+            authors : ["牛绍乾","乾隆"],
+            edition : 3,
+            year : 2020,
+            toJSON : function(){
+                return undefined;
+            }
+        };
+        var jsonText = JSON.stringify(book,function(key,value){
+            switch(key){
+                default : return value;
+            }
+        });
+        console.log(jsonText);//undefined
+    </script>
+
+    <!-- 03反序列化 -->
+    <script>
+        "use strict";
+        console.log("JSON.parse方法:");
+        //JSON.parse
+        /* 总结
+            1.参数
+            2.第一个参数：
+                字符串：传入的JSON字符串不合法，会抛出异常
+            3.第二参数：（还原）函数
+                ->该函数与JSON.stringify()的第二个参数类似
+                ->注：对象实例会被转换为字符串,然后存储到JSON字符串中
+        */
+
+        //字符串正常的情况下
+        var jsonText = `{"title":"我的书","authors":["牛绍乾","乾隆"],"year":2020}`;
+        var book = JSON.parse(jsonText);
+        console.log(book);//返回一个对象
+        //字符串不符合语法规则时：
+        /* var jsonText = `{"title":"我的书","authors":undefined,"year":2020}`;
+        //报错 Uncaught SyntaxError: Unexpected token b in JSON at position 25
+        console.log(JSON.parse(jsonText)); */
+
+        //第二参数 还原函数
+        //测试一
+        var book = {
+            title : "我的书",
+            authors : ["牛绍乾","乾隆"],
+            edition : 3,
+            date : new Date(2020,10,13),
+        };
+        var jsonText = JSON.stringify(book);
+        //{"title":"我的书","authors":["牛绍乾","乾隆"],"edition":3,"date":"2020-11-12T16:00:00.000Z"}
+        console.log(jsonText);
+
+        var book1 = JSON.parse(jsonText);
+        console.log(typeof book.date);//object
+        console.log(typeof book1.date);//string
+        //测试二
+        var book = {
+            title : "我的书",
+            authors : ["牛绍乾","乾隆"],
+            edition : 3,
+            date : new Date(2020,10,13),
+        };
+        var jsonText = JSON.stringify(book);
+        //{"title":"我的书","authors":["牛绍乾","乾隆"],"edition":3,date":"2020-11-12T16:00:00.000Z"}
+        console.log(jsonText);
+
+        var book1 = JSON.parse(jsonText,(key,value) =>{
+            if(key === "date") return new Date(value);
+            else return value;
+        });
+        console.log(typeof book.date);//object
+        console.log(typeof book1.date);//object
+    </script>
+</body>
+</html>

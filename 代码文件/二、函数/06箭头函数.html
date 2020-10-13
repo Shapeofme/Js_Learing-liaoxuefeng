@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <h1>存在疑惑</h1>
+    <h1>存在疑惑 箭头函数与匿名函数中的this</h1>
     <!-- 01箭头函数 -->
     <script>
         /* 总结：
@@ -103,6 +103,28 @@
             }
         };
         console.log(obj.getAge(2015)); //25
+    </script>
+
+    <script>
+        //箭头函数与匿名函数中的this
+        //箭头函数中没有自己的this
+        // "use strict";
+        var person = {
+            name : "牛晒钱",
+            getN : function(){
+                console.log(this);
+            }
+        };
+        person.getN();//person
+
+        var person = {
+            name : this,
+            getN : () => {
+                console.log(this);
+            }
+        };
+        person.getN();//window
+        console.log(person.name);//window
     </script>
 </body>
 
