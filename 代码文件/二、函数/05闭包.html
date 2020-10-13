@@ -18,6 +18,19 @@
             4.注意：返回的函数不要引用任何循环变量，或者后续会发生变化的变量。（举例见下）
         */
         "use strict";
+        var that = this;
+        function ce(){
+            var b = 100;
+            a();
+            console.log(that);
+            function a(){
+                console.log(this);
+                console.log(b);
+            }
+        };
+        var c = ce;
+        c();
+        console.log(window.hasOwnProperty('ce'));
     </script>
 
     <script>
